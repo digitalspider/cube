@@ -1,50 +1,46 @@
 package au.com.digitalspider.controller;
 
 import java.text.MessageFormat;
-import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.ws.rs.Consumes;
-import javax.ws.rs.GET;
-import javax.ws.rs.POST;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
+import javax.servlet.http.HttpServletRequest;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
-import org.springframework.context.annotation.Scope;
+import org.omg.CORBA.portable.ApplicationException;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 
 import com.google.gson.Gson;
 
 import au.com.digitalspider.bean.CubeItem;
 import au.com.digitalspider.bean.CubeSpace;
 import au.com.digitalspider.bean.CubingInputBean;
-import au.com.digitalspider.bean.ProductDimensionsBean;
 import au.com.digitalspider.bean.Orientation;
-import au.com.digitalspider.exception.ApplicationException;
-import au.com.digitalspider.factory.ServiceFactory;
 import au.com.digitalspider.service.CubingService;
-import au.com.digitalspider.service.ProductDimensionsService;
-import au.com.digitalspider.model.dto.CubingResult;
 
-/**
- *	Services to screens:
- *	<br/>Home -> Login
- *
- */
-@Path("cube")
+@RequestMapping("/cube")
 @Component
-@Produces({ MediaType.APPLICATION_JSON })
-@Scope("singleton")
-public class CubingResource extends BaseResource{
+public class CubingController {
 
-	private static Logger LOG = Logger.getLogger(CubingResource.class);
+	private static Logger LOG = Logger.getLogger(CubingController.class);
 
+	@Autowired
+	private CubingService cubingService;
+
+	@GetMapping("/")
+	public String index() {
+		return "index";
+	}
+	
 	/**
 	 * Determines if products fit in the dimensions given.
 	 *
@@ -66,83 +62,71 @@ public class CubingResource extends BaseResource{
 	 * @return The {@link CubingResult} as a json response with success, and a message. Format is {"success":true,"message":"CubeSpace[0.0,0.0,0.0] spaces=132 cubes=2 l=284.90/300.0, w=299.20/300.0 h=16.20/30.0 volume=45.20%"}
 	 * @throws ApplicationException
 	 */
-	@GET
-	@Path("/{maxLength}/{maxWidth}/{maxHeight}/{maxWeight}/{productId1}/{qty1}{path:(/.*)?}")
-	@Produces("application/json")
-	public Response getCubeSpace(
-			@PathParam(value = "maxLength") Float maxLength,
-			@PathParam(value = "maxWidth") Float maxWidth,
-			@PathParam(value = "maxHeight") Float maxHeight,
-			@PathParam(value = "maxWeight") Float maxWeight,
-			@PathParam(value = "productId1") String productId1,
-			@PathParam(value = "qty1") int qty1,
-			@PathParam(value = "path") String path)
-
-			throws ApplicationException {
+	@RequestMapping(value = "/{maxLength}/{maxWidth}/{maxHeight}/{maxWeight}/{productId1}/{qty1}{path:(/.*)?}",
+			method = { RequestMethod.GET, RequestMethod.POST })
+	public ResponseEntity<?> startContainer(HttpServletRequest request, @PathVariable String maxLength,
+			@PathVariable String maxWidth, @PathVariable String maxHeight,
+			@PathVariable String maxWeight, @PathVariable String productId1, @PathVariable String qty1) {
+		AjaxResponseBody<CubeSpace> result = new AjaxResponseBody<>();
 
 		LOG.info(MessageFormat.format("Test cubing with length={0},width={1},height={2},weight={3}, and productId1={4},qty1={5}, path={6}", maxLength,maxWidth,maxHeight,maxWeight,productId1,qty1,path));
-
-		//response DTO
-		CubingResult cubingResult = new CubingResult();
 		boolean success = false;
 
+//		Map<String, String> params = parsePath(path);
+//		for (String key : params.keySet()) {
+//			try {
+//				productIdsList.add(key);
+//			} catch (Exception e) {
+//				LOG.error("Not a valid productId: "+key);
+//			}
+//		}
+//
+//		LOG.info("productListIds="+productIdsList);
+//
+//		// Create skeleton cubeItems
+//		List<CubeItem> cubeItemList = new ArrayList<CubeItem>();
+//		for (String productId : productIdsList) {
+//			CubeItem cubeItem = new CubeItem(productId);
+//			if (cubeItem.id.equals(productId1)) {
+//				cubeItem.quantity = qty1;
+//			}
+//			else if (params.containsKey(cubeItem.id)) {
+//				cubeItem.quantity =  Integer.parseInt(params.get(cubeItem.id));
+//			}
+//			cubeItemList.add(cubeItem);
+//		}
+
+//		populateCubeItemDimensions(cubeItemList);
+//		LOG.info("cubeItems="+cubeItemList);
+//		LOG.info("cubingService.calculateCubeSpace() START");
+//		CubeSpace cubeSpace = cubingService.calculateCubeSpace(cubeItemList, maxLength, maxWidth, maxHeight, maxWeight, Orientation.HORIZONTAL);
+//		LOG.info("cubingService.calculateCubeSpace() DONE");
+//		success = true;
+//		cubingResult.setMessage(cubeSpace.toString());
+//	} catch (Exception e) {
+//		LOG.error(e);
+//		cubingResult.setMessage(e.getMessage());
+//	}
+//
+//	//process result
+//	cubingResult.setSuccess(success);
+
 		try {
-			CubingService cubingService = ServiceFactory.getInstance().getCubingService();
-			List<String> productIdsList = new ArrayList<String>();
-
-			// Validate parameters not null or ""
-			handleEmptyError(productId1, "Product");
-			handleEmptyError(qty1, "Quantity");
-
-			productIdsList.add(productId1);
-
-			try {
-				Map<String, String> params = parsePath(path);
-				for (String key : params.keySet()) {
-					try {
-						productIdsList.add(key);
-					} catch (Exception e) {
-						LOG.error("Not a valid productId: "+key);
-					}
-				}
-
-				LOG.info("productListIds="+productIdsList);
-
-				// Create skeleton cubeItems
-				List<CubeItem> cubeItemList = new ArrayList<CubeItem>();
-				for (String productId : productIdsList) {
-					CubeItem cubeItem = new CubeItem(productId);
-					if (cubeItem.id.equals(productId1)) {
-						cubeItem.quantity = qty1;
-					}
-					else if (params.containsKey(cubeItem.id)) {
-						cubeItem.quantity =  Integer.parseInt(params.get(cubeItem.id));
-					}
-					cubeItemList.add(cubeItem);
-				}
-
-				populateCubeItemDimensions(cubeItemList);
-				LOG.info("cubeItems="+cubeItemList);
-				LOG.info("cubingService.calculateCubeSpace() START");
-				CubeSpace cubeSpace = cubingService.calculateCubeSpace(cubeItemList, maxLength, maxWidth, maxHeight, maxWeight, Orientation.HORIZONTAL);
-				LOG.info("cubingService.calculateCubeSpace() DONE");
-				success = true;
-				cubingResult.setMessage(cubeSpace.toString());
-			} catch (Exception e) {
-				LOG.error(e);
-				cubingResult.setMessage(e.getMessage());
+			if (StringUtils.isBlank(maxLength)) {
+				throw new IllegalArgumentException("Cannot start container if containerName is blank");
 			}
-
-			//process result
-			cubingResult.setSuccess(success);
-
+			CubeSpace cubeSpace = cubingService.calculateCubeSpace(cubeList, maxLength, maxWidth, maxHeight, maxWeight);
+			List<CubeSpace> resultList = Arrays.asList(cubeSpace);
+			result.setResult(resultList);
+			result.setMsg("result found: " + cubeSpace);
 		} catch (Exception e) {
-			handleFatalError(e);
+			LOG.error(e, e);
+			result.setMsg(e.getMessage());
+			return ResponseEntity.badRequest().body(result);
 		}
-
-		return buildOkResponse(cubingResult);
+		return ResponseEntity.ok(result);
 	}
-
+	
 	/**
 	 * JSON input defines the cube constraints, the list of {@link CubeItem} objects, and whether to populateProduct dimensions.
 	 * The processing is done by {@link CubingService#calculateCubeSpace}.
@@ -257,5 +241,9 @@ public class CubingResource extends BaseResource{
 			pathMap.put(key, value);
 		}
 		return pathMap;
+	}
+
+	public void setCubingService(CubingService cubingService) {
+		this.cubingService = cubingService;
 	}
 }
