@@ -1,11 +1,12 @@
 package au.com.digitalspider.controller;
 
-import java.util.Collection;
+import java.util.List;
 
 public class AjaxResponseBody<T> {
 
 	String msg;
-	Collection<T> result;
+	T result;
+	List<T> resultList;
 
 	public String getMsg() {
 		return msg;
@@ -15,11 +16,19 @@ public class AjaxResponseBody<T> {
 		this.msg = msg;
 	}
 
-	public Collection<T> getResult() {
+	public T getResult() {
 		return result;
 	}
 
-	public void setResult(Collection<T> result) {
+	public void setResult(T result) {
 		this.result = result;
+	}
+	
+	public List<T> getResultList() {
+		return resultList;
+	}
+
+	public void setResultList(List<T> resultList) {
+		this.resultList = resultList;
 	}
 }
