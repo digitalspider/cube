@@ -44,7 +44,7 @@ public class CubingController {
 	}
 	
 	/**
-	 * Determines if products fit in the dimensions given.
+	 * Determines if item fits within the given dimensions.
 	 *
 	 * Information is provided by url parameters in the format: /{maxLength}/{maxWidth}/{maxHeight}/{maxWeight}/{itemLength}/{itemWidth}/{itemHeight}/{itemWeight}/{itemQuantity}
 	 * Example:
@@ -101,20 +101,20 @@ public class CubingController {
 	}
 	
 	/**
-	 * Determines if products fit in the dimensions given.
+	 * Determines how many items will fit in the given dimensions.
 	 *
-	 * Information is provided by url parameters in the format: /{maxLength}/{maxWidth}/{maxHeight}/{maxWeight}/{productId1}/{qty1}{path:(/.*)?}
+	 * Information is provided by url parameters in the format: /{maxLength}/{maxWidth}/{maxHeight}/{maxWeight}/{itemLength}/{itemWidth}/{itemHeight}/{itemWeight}
 	 * Example:
 	 * <ul>
-	 * 	<li>http://localhost:8080/ezwebservice/ezw/cube/25/25/3.5/7.0/1234567/2/943021231/3</li>
+	 * 	<li>http://localhost:8080/cube/25/25/3.5/7.0/4.5/2.1/1.0/50.0</li>
 	 * </ul>
 	 * The above example processes:
 	 * <ul>
 	 * 	<li>constraints: maxLength=25, maxWidth=25, maxHeight=3.5 and weight=7.0</li>
-	 *  <li>products: 1234567 x2 and 943021231 x3</li>
+	 *  <li>product: maxLength=4.5, maxWidth=2.1, maxHeight=1.0 and weight=50.0</li>
 	 * </ul>
-	 * The dimensions of the products are looked up using {@link #populateCubeItemDimensions(List)}.
-	 * They are converted into a list of {@link CubeItems} and processed using {@link CubingService#calculateCubeSpace}
+	 * The dimensions of the product are converted into {@link CubeItems} 
+	 * and processed using {@link CubingService#calculateCubeSpace}
 	 *
 	 * @param constraints json input with format {weight:0.281,length:17.8,width:11.1,height:3.2}
 	 * @param cubes json input with format [{id:25845880,weight:0.500,length:24.4,width:16.8,height:2.0,quantity:1},{id:29854048,weight:0.028,length:22.9,width:15.2,height:2.5,quantity:3}]
@@ -156,7 +156,7 @@ public class CubingController {
 					break;
 				}
 			}
-			int resultQuantity = cubeItem.quantity;
+			int resultQuantity = cubeItem.quantity - 1;
 			LOG.info("cubingService.calculateCubeSpace() DONE. resultQuantity="+resultQuantity);
 			result.setResult(new CubingOutput().setCubeSpace(cubeSpace));
 			result.setMsg("success. qty="+resultQuantity+" space=" + cubeSpace);
@@ -170,20 +170,20 @@ public class CubingController {
 
 
 	/**
-	 * Determines if products fit in the dimensions given.
+	 * Determines if the given items fit in the given dimensions.
 	 *
-	 * Information is provided by url parameters in the format: /{maxLength}/{maxWidth}/{maxHeight}/{maxWeight}/{productId1}/{qty1}{path:(/.*)?}
+	 * Information is provided by url parameters in the format: /{maxLength}/{maxWidth}/{maxHeight}/{maxWeight}
 	 * Example:
 	 * <ul>
-	 * 	<li>http://localhost:8080/ezwebservice/ezw/cube/25/25/3.5/7.0/1234567/2/943021231/3</li>
+	 * 	<li>http://localhost:8080/cube/25/25/3.5/7.0</li>
 	 * </ul>
 	 * The above example processes:
 	 * <ul>
 	 * 	<li>constraints: maxLength=25, maxWidth=25, maxHeight=3.5 and weight=7.0</li>
-	 *  <li>products: 1234567 x2 and 943021231 x3</li>
+	 *  <li>products: provided using json data</li>
 	 * </ul>
-	 * The dimensions of the products are looked up using {@link #populateCubeItemDimensions(List)}.
-	 * They are converted into a list of {@link CubeItems} and processed using {@link CubingService#calculateCubeSpace}
+	 * The dimensions of the product are converted into {@link CubeItems} 
+	 * and processed using {@link CubingService#calculateCubeSpace}
 	 *
 	 * @param constraints json input with format {weight:0.281,length:17.8,width:11.1,height:3.2}
 	 * @param cubes json input with format [{id:25845880,weight:0.500,length:24.4,width:16.8,height:2.0,quantity:1},{id:29854048,weight:0.028,length:22.9,width:15.2,height:2.5,quantity:3}]
@@ -217,20 +217,20 @@ public class CubingController {
 	}
 	
 	/**
-	 * Determines if products fit in the dimensions given.
+	 * Determines if the smallest dimension within which the given items fit.
 	 *
-	 * Information is provided by url parameters in the format: /{maxLength}/{maxWidth}/{maxHeight}/{maxWeight}/{productId1}/{qty1}{path:(/.*)?}
+	 * Information is provided by url parameters in the format: /slot
 	 * Example:
 	 * <ul>
-	 * 	<li>http://localhost:8080/ezwebservice/ezw/cube/25/25/3.5/7.0/1234567/2/943021231/3</li>
+	 * 	<li>http://localhost:8080/cube/slot</li>
 	 * </ul>
 	 * The above example processes:
 	 * <ul>
-	 * 	<li>constraints: maxLength=25, maxWidth=25, maxHeight=3.5 and weight=7.0</li>
-	 *  <li>products: 1234567 x2 and 943021231 x3</li>
+	 * 	<li>constraints: provided using json data</li>
+	 *  <li>products: provided using json data</li>
 	 * </ul>
-	 * The dimensions of the products are looked up using {@link #populateCubeItemDimensions(List)}.
-	 * They are converted into a list of {@link CubeItems} and processed using {@link CubingService#calculateCubeSpace}
+	 * The dimensions of the product are converted into {@link CubeItems} 
+	 * and processed using {@link SlottingService#findCubeSpace(List, List)}
 	 *
 	 * @param constraints json input with format {weight:0.281,length:17.8,width:11.1,height:3.2}
 	 * @param cubes json input with format [{id:25845880,weight:0.500,length:24.4,width:16.8,height:2.0,quantity:1},{id:29854048,weight:0.028,length:22.9,width:15.2,height:2.5,quantity:3}]
