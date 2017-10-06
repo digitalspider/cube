@@ -1,11 +1,11 @@
-package au.com.SlottingService.java.service;
+package au.com.digitalspider.service;
 
 import java.util.List;
 
-import au.com.booktopia.enums.ZoneType;
-import au.com.SlottingService.java.beans.StockBinBean;
-import au.com.SlottingService.java.constant.BinType;
-import au.com.SlottingService.java.constant.StockType;
+import au.com.digitalspider.bean.StockBinBean;
+import au.com.digitalspider.constant.BinType;
+import au.com.digitalspider.constant.StockType;
+import au.com.digitalspider.enums.ZoneType;
 
 public interface SlottingService {
 

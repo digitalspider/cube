@@ -7,8 +7,6 @@ import java.util.List;
 import java.util.Set;
 import java.util.concurrent.CopyOnWriteArrayList;
 
-import au.com.digitalspider.common.Orientation;
-
 public class CubeSpace {
 	public double x;
 	public double y;
@@ -64,6 +62,7 @@ public class CubeSpace {
 		this.maxWeight = maxWeight;
 	}
 
+	@Override
 	public String toString() {
 		DecimalFormat df = new DecimalFormat("00.00");
 		String volumeString = "volume="+df.format(getVolumePercent())+"%";
