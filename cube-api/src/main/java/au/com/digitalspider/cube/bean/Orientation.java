@@ -1,4 +1,4 @@
-package au.com.digitalspider.bean;
+package au.com.digitalspider.cube.bean;
 
 public enum Orientation {
 	ANY(0), VERTICAL(1), HORIZONTAL(2);

@@ -1,4 +1,4 @@
-package au.com.digitalspider.bean;
+package au.com.digitalspider.cube.bean;
 
 import java.text.DecimalFormat;
 import java.util.ArrayList;

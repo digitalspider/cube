@@ -1,10 +1,10 @@
-package au.com.digitalspider.service;
+package au.com.digitalspider.cube.service;
 
 import java.util.List;
 
-import au.com.digitalspider.bean.CubeItem;
-import au.com.digitalspider.bean.CubeSpace;
-import au.com.digitalspider.bean.Orientation;
+import au.com.digitalspider.cube.bean.CubeItem;
+import au.com.digitalspider.cube.bean.CubeSpace;
+import au.com.digitalspider.cube.bean.Orientation;
 
 public interface CubingService {
 

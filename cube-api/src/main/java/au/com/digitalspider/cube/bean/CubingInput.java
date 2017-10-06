@@ -1,8 +1,8 @@
-package au.com.digitalspider.bean;
+package au.com.digitalspider.cube.bean;
 
 import java.util.List;
 
-import au.com.digitalspider.service.CubingService;
+import au.com.digitalspider.cube.service.CubingService;
 
 /**
  * JSON input defines the cube constraints, the list of {@link CubeItem} objects, and whether to populateProduct dimensions.

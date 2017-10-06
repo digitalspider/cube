@@ -1,4 +1,4 @@
-package au.com.digitalspider.controller;
+package au.com.digitalspider.cube.controller;
 
 import java.util.List;
 

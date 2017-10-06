@@ -1,4 +1,4 @@
-package au.com.digitalspider.service.impl;
+package au.com.digitalspider.cube.service.impl;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -9,11 +9,12 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.apache.log4j.Logger;
+import org.springframework.stereotype.Service;
 
-import au.com.digitalspider.bean.CubeItem;
-import au.com.digitalspider.bean.CubeSpace;
-import au.com.digitalspider.bean.Orientation;
-import au.com.digitalspider.service.CubingService;
+import au.com.digitalspider.cube.bean.CubeItem;
+import au.com.digitalspider.cube.bean.CubeSpace;
+import au.com.digitalspider.cube.bean.Orientation;
+import au.com.digitalspider.cube.service.CubingService;
 
 /**
  * Outstanding items:
@@ -22,6 +23,7 @@ import au.com.digitalspider.service.CubingService;
  *  <li>Orientation.ANY is not implemented either.</li>
  * </ul>
  */
+@Service
 public class CubingServiceImpl implements CubingService {
 
 	public static Logger LOG = Logger.getLogger(CubingServiceImpl.class);

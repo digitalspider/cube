@@ -1,4 +1,4 @@
-package au.com.digitalspider.controller;
+package au.com.digitalspider.cube.controller;
 
 import java.text.MessageFormat;
 import java.util.ArrayList;
@@ -19,12 +19,13 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
-import au.com.digitalspider.bean.CubeItem;
-import au.com.digitalspider.bean.CubeSpace;
-import au.com.digitalspider.bean.CubingInput;
-import au.com.digitalspider.bean.Orientation;
-import au.com.digitalspider.service.CubingService;
-import au.com.digitalspider.service.SlottingService;
+import au.com.digitalspider.cube.bean.CubeItem;
+import au.com.digitalspider.cube.bean.CubeSpace;
+import au.com.digitalspider.cube.bean.CubingInput;
+import au.com.digitalspider.cube.bean.CubingOutput;
+import au.com.digitalspider.cube.bean.Orientation;
+import au.com.digitalspider.cube.service.CubingService;
+import au.com.digitalspider.cube.service.SlottingService;
 
 @RequestMapping("/cube")
 @Component
@@ -64,11 +65,11 @@ public class CubingController {
 	 * @throws ApplicationException
 	 */
 	@RequestMapping(value = "/{maxLength}/{maxWidth}/{maxHeight}/{maxWeight}/{itemLength}/{itemWidth}/{itemHeight}/{itemWeight}/{itemQuantity}", method = { RequestMethod.GET, RequestMethod.POST })
-	public ResponseEntity<?> willCubesFit(HttpServletRequest request, 
+	public ResponseEntity<?> willCubeFit(HttpServletRequest request, 
 			@PathVariable double maxLength, @PathVariable double maxWidth, @PathVariable double maxHeight, @PathVariable double maxWeight, 
 			@PathVariable double itemLength, @PathVariable double itemWidth, @PathVariable double itemHeight, @PathVariable double itemWeight, 
 			@PathVariable int itemQuantity) {
-		AjaxResponseBody<CubeSpace> result = new AjaxResponseBody<>();
+		AjaxResponseBody<CubingOutput> result = new AjaxResponseBody<>();
 
 		LOG.info(MessageFormat.format("Test cubing with length={0},width={1},height={2},weight={3}, and length={4},width={5},height={6},weight={7}, qty={8}", maxLength,maxWidth,maxHeight,maxWeight, itemLength,itemWidth,itemHeight,itemWeight,itemQuantity));
 		boolean success = false;
@@ -88,7 +89,7 @@ public class CubingController {
 			CubeSpace cubeSpace = cubingService.calculateCubeSpace(cubeItemList, maxLength, maxWidth, maxHeight, maxWeight, Orientation.HORIZONTAL);
 			LOG.info("cubingService.calculateCubeSpace() DONE");
 			success = true;
-			result.setResult(cubeSpace);
+			result.setResult(new CubingOutput().setCubeSpace(cubeSpace));
 			result.setMsg("success: " + cubeSpace.toString());
 		} catch (Exception e) {
 			LOG.error(e, e);
@@ -124,7 +125,7 @@ public class CubingController {
 	public ResponseEntity<?> howManyCubes(HttpServletRequest request, 
 			@PathVariable double maxLength, @PathVariable double maxWidth, @PathVariable double maxHeight, @PathVariable double maxWeight, 
 			@PathVariable double itemLength, @PathVariable double itemWidth, @PathVariable double itemHeight, @PathVariable double itemWeight) {
-		AjaxResponseBody<CubeSpace> result = new AjaxResponseBody<>();
+		AjaxResponseBody<CubingOutput> result = new AjaxResponseBody<>();
 
 		LOG.info(MessageFormat.format("Test cubing with length={0},width={1},height={2},weight={3}, and length={4},width={5},height={6},weight={7}", maxLength,maxWidth,maxHeight,maxWeight, itemLength,itemWidth,itemHeight,itemWeight));
 
@@ -157,7 +158,7 @@ public class CubingController {
 			}
 			int resultQuantity = cubeItem.quantity;
 			LOG.info("cubingService.calculateCubeSpace() DONE. resultQuantity="+resultQuantity);
-			result.setResult(cubeSpace);
+			result.setResult(new CubingOutput().setCubeSpace(cubeSpace));
 			result.setMsg("success. qty="+resultQuantity+" space=" + cubeSpace);
 		} catch (Exception e) {
 			LOG.error(e, e);
@@ -190,10 +191,10 @@ public class CubingController {
 	 * @throws ApplicationException
 	 */
 	@RequestMapping(value = "/{maxLength}/{maxWidth}/{maxHeight}/{maxWeight}", method = { RequestMethod.GET, RequestMethod.POST })
-	public ResponseEntity<?> startContainer(HttpServletRequest request, @PathVariable double maxLength,
+	public ResponseEntity<?> willCubesFit(HttpServletRequest request, @PathVariable double maxLength,
 			@PathVariable double maxWidth, @PathVariable double maxHeight, @PathVariable double maxWeight, 
 			@Valid @RequestBody CubingInput cubingInput, Errors errors) {
-		AjaxResponseBody<CubeSpace> result = new AjaxResponseBody<>();
+		AjaxResponseBody<CubingOutput> result = new AjaxResponseBody<>();
 
 		LOG.info(MessageFormat.format("Cubing with length={0},width={1},height={2},weight={3}, and items={4}", maxLength,maxWidth,maxHeight,maxWeight,cubingInput.getCubeItems()));
 		boolean success = false;
@@ -205,7 +206,7 @@ public class CubingController {
 			CubeSpace cubeSpace = cubingService.calculateCubeSpace(cubeItemList, maxLength, maxWidth, maxHeight, maxWeight, Orientation.HORIZONTAL);
 			LOG.info("cubingService.calculateCubeSpace() DONE");
 			success = true;
-			result.setResult(cubeSpace);
+			result.setResult(new CubingOutput().setCubeSpace(cubeSpace));
 			result.setMsg("result found: " + cubeSpace);
 		} catch (Exception e) {
 			LOG.error(e, e);
@@ -238,7 +239,7 @@ public class CubingController {
 	 */
 	@RequestMapping(value = "/slot", method = { RequestMethod.GET, RequestMethod.POST })
 	public ResponseEntity<?> slot(HttpServletRequest request, @Valid @RequestBody CubingInput cubingInput, Errors errors) {
-		AjaxResponseBody<CubeSpace> result = new AjaxResponseBody<>();
+		AjaxResponseBody<CubingOutput> result = new AjaxResponseBody<>();
 
 		LOG.info(MessageFormat.format("Slotting with spaces={0},items={1}", cubingInput.getCubeSpaces(),cubingInput.getCubeItems()));
 		try {
@@ -247,7 +248,7 @@ public class CubingController {
 			LOG.info("cubingService.calculateCubeSpace() START");
 			CubeSpace cubeSpace = slottingService.findCubeSpace(cubingInput.getCubeSpaces(), cubingInput.getCubeItems());
 			LOG.info("cubingService.calculateCubeSpace() DONE");
-			result.setResult(cubeSpace);
+			result.setResult(new CubingOutput().setCubeSpace(cubeSpace));
 			result.setMsg("result found: " + cubeSpace);
 		} catch (Exception e) {
 			LOG.error(e, e);

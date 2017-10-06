@@ -1,15 +1,17 @@
-package au.com.digitalspider.service.impl;
+package au.com.digitalspider.cube.service.impl;
 
 import java.util.Collections;
 import java.util.List;
 
 import org.apache.log4j.Logger;
+import org.springframework.stereotype.Service;
 
-import au.com.digitalspider.bean.CubeItem;
-import au.com.digitalspider.bean.CubeSpace;
-import au.com.digitalspider.service.CubingService;
-import au.com.digitalspider.service.SlottingService;
+import au.com.digitalspider.cube.bean.CubeItem;
+import au.com.digitalspider.cube.bean.CubeSpace;
+import au.com.digitalspider.cube.service.CubingService;
+import au.com.digitalspider.cube.service.SlottingService;
 
+@Service
 public class SlottingServiceImpl implements SlottingService {
 
 	public static Logger LOG = Logger.getLogger(SlottingServiceImpl.class);
